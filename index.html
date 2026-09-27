@@ -1,0 +1,190 @@
+<!-- 
+  TPWSMD Assessment Web Page
+  Architecture & Logic: Developed in collaboration with AI on Google Search which is powered by the Gemini family of models
+  Last Updated: August 2026
+-->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=10.0, user-scalable=yes">
+    <title>TPWSMD Assessment Web Page</title>
+  <style>
+    /* BASE LAYOUT */
+    body { 
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+        display: flex; 
+        flex-direction: column; 
+        height: 100vh; 
+        margin: 0; 
+        overflow: hidden; 
+    }
+    
+    /* ROW 1: HEADER */
+    .header { 
+        display: flex; 
+        align-items: center; 
+        justify-content: space-between; 
+        padding: 5px 10px; 
+        background: #f8f9fa; 
+        border-bottom: 1px solid #dee2e6; 
+    }
+    
+    .header h3 { 
+        margin: 0; 
+        flex-grow: 1; 
+        text-align: center; 
+        font-size: 1.1rem; 
+        color: SeaGreen;
+        white-space: nowrap;
+    }
+
+    
+    /* ROW 2: NAVIGATION */
+    .nav { 
+        display: flex; 
+        justify-content: center; 
+        align-items: center; 
+        gap: 10px; 
+        padding: 10px; 
+        background: #ffffff; 
+        border-bottom: 1px solid #dee2e6;
+        flex-wrap: wrap; /* Allows wrapping on small screens */
+    }
+
+    .nav-label {
+        font-size: 10px;
+        font-weight: bold;
+        color: #666;
+        padding-right: 8px;
+        border-right: 2px solid #007bff;
+    }
+
+    .grid-2x2 { display: flex; gap: 5px; }
+    .nav-column { display: flex; flex-direction: column; gap: 4px; }
+    .nav-row { display: flex; gap: 5px; }
+
+    .nav button { 
+        padding: 5px 10px; 
+        cursor: pointer; 
+        border: 1px solid #007bff; 
+        background: white; 
+        color: #007bff; 
+        border-radius: 4px;
+        font-size: 12px;
+    }
+
+    .block-btn { width: 110px; }
+    .nav button.active { background: #007bff; color: white; }
+
+    .divider { width: 1px; height: 40px; background-color: #dee2e6; }
+
+    /* ROW 3: CONTENT */
+    .content-area { 
+        flex-grow: 1; 
+        border: none; 
+        border-top: 2px solid #dee2e6;
+        width: 100%; 
+        background: #f1f3f5;
+    }
+
+    /* ========================================== */
+    /* MOBILE SPECIFIC OVERRIDES (Screens < 768px) */
+    /* ========================================== */
+    @media (max-width: 768px) {
+        /* Hide Row 1 Buttons and Warning on Mobile */
+        .header-left, .header-right { display: none; }
+        
+        .header h3 { width: 100%; text-align: center; font-size: 1rem; }
+
+        /* Shrink Row 2 for Mobile */
+        .nav { padding: 8px; gap: 5px; justify-content: space-around; }
+        .nav-label { font-size: 9px; padding-right: 5px; }
+        
+        .block-btn { width: 85px; font-size: 11px; padding: 4px 5px; }
+        .nav-row button { font-size: 11px; padding: 4px 8px; }
+        
+        .divider { margin: 0 5px; }
+
+        /* Ensure Iframe fills width exactly */
+        .content-area { width: 100vw; }
+    }
+</style>
+</head>
+<body>
+
+    <!-- ROW 1 -->
+    <div class="header">
+        <div class="header-left"></div>
+        <h3>TPWSMD Assessment -- May 2026</h3>
+        
+    </div>
+
+    <!-- ROW 2 -->
+    <div class="nav">
+        <div class="nav-label">Shorefront<br>Owner Fees</div>
+
+        <div class="grid-2x2">
+            <div class="nav-column">
+                <button id="default-btn" class="block-btn" onclick="loadPage(this, 'TPWSD_Parcels_BH.pdf')">Blue Hill</button>
+                <button class="block-btn" onclick="loadPage(this, 'TPWSD_Parcels_Orland.pdf')">Orland</button>
+            </div>
+            <div class="nav-column">
+                <button class="block-btn" onclick="loadPage(this, 'TPWSD_Parcels_Penobscot.pdf')">Penobscot</button>
+                <button class="block-btn" onclick="loadPage(this, 'TPWSD_Parcels_Surry.pdf')">Surry</button>
+            </div>
+        </div>
+
+       
+    </div>
+
+    <!-- ROW 3 -->
+    <iframe id="display-frame" class="content-area"></iframe>
+
+    <script>
+ function loadPage(element, url) {
+    let finalUrl = url;
+
+    if (url.toLowerCase().endsWith('.pdf')) {
+        const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+        
+        if (isMobile) {
+            // Using 55% zoom for mobile
+            finalUrl = 'pdfjs/web/viewer.html?file=../../' + url + '#zoom=55&pagemode=none';
+        } else {
+            // Using 60% zoom for desktop native viewer
+            finalUrl = url + '#toolbar=0&navpanes=0#zoom=60';
+        }
+    }
+
+    document.getElementById('display-frame').src = finalUrl;
+
+    if (element) {
+        const buttons = document.querySelectorAll('.nav button');
+        buttons.forEach(btn => btn.classList.remove('active'));
+        element.classList.add('active');
+    }
+}
+
+
+        // Initialize page
+        window.onload = function() {
+            const defaultBtn = document.getElementById('default-btn');
+            loadPage(defaultBtn, 'TPWSD_Parcels_BH.pdf');
+        };
+
+        // Double-tap zoom protection
+        const iframe = document.getElementById('display-frame');
+        let lastTap = 0;
+        iframe.addEventListener('touchstart', function(e) {
+            const currentTime = new Date().getTime();
+            const tapLength = currentTime - lastTap;
+            if (tapLength < 300 && tapLength > 0) {
+                e.preventDefault(); 
+            }
+            lastTap = currentTime;
+        });
+    </script>
+</body>
+</html>
