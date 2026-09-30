@@ -143,21 +143,27 @@
     <iframe id="display-frame" class="content-area"></iframe>
 
     <script>
-  function loadPage(element, url) {
+  
+ function loadPage(element, url) {
     let finalUrl = url;
 
     if (url.toLowerCase().endsWith('.pdf')) {
         const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
         
         if (isMobile) {
-            // 1. Get the exact base link of your current GitHub Pages site (e.g., https://github.io)
-            const baseUrl = window.location.origin + window.location.pathname.replace('index.html', '');
-            
-            // 2. Build absolute paths to avoid folder-jumping security triggers on Android
-            const viewerPath = baseUrl + 'pdfjs/web/viewer.html';
-            const filePath = baseUrl + url;
+            // 1. Build a completely sanitized base directory path
+            let basePath = window.location.origin + window.location.pathname;
+            if (!basePath.endsWith('/')) {
+                basePath += '/';
+            }
+            // Strip out index.html text if a browser forces it into the path string
+            basePath = basePath.replace('index.html/', '');
 
-            // 3. Assemble the clean, encoded URL string
+            // 2. Map absolute paths to completely bypass relative jumping bugs
+            const viewerPath = basePath + 'pdfjs/web/viewer.html';
+            const filePath = basePath + url;
+
+            // 3. Encode the clean file address explicitly
             finalUrl = viewerPath + '?file=' + encodeURIComponent(filePath) + '#zoom=55&pagemode=none';
         } else {
             // Using 60% zoom for desktop native viewer
@@ -174,6 +180,7 @@
     }
 }
 
+   
 
 
         // Initialize page
