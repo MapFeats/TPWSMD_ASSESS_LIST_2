@@ -144,27 +144,15 @@
 
     <script>
   
- function loadPage(element, url) {
+  function loadPage(element, url) {
     let finalUrl = url;
 
     if (url.toLowerCase().endsWith('.pdf')) {
         const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
         
         if (isMobile) {
-            // 1. Build a completely sanitized base directory path
-            let basePath = window.location.origin + window.location.pathname;
-            if (!basePath.endsWith('/')) {
-                basePath += '/';
-            }
-            // Strip out index.html text if a browser forces it into the path string
-            basePath = basePath.replace('index.html/', '');
-
-            // 2. Map absolute paths to completely bypass relative jumping bugs
-            const viewerPath = basePath + 'pdfjs/web/viewer.html';
-            const filePath = basePath + url;
-
-            // 3. Encode the clean file address explicitly
-            finalUrl = viewerPath + '?file=' + encodeURIComponent(filePath) + '#zoom=55&pagemode=none';
+            // Reverting to the strict, clean relative path structure used in your working site
+            finalUrl = 'pdfjs/web/viewer.html?file=' + encodeURIComponent('../../' + url) + '#zoom=55&pagemode=none';
         } else {
             // Using 60% zoom for desktop native viewer
             finalUrl = url + '#toolbar=0&navpanes=0#zoom=60';
@@ -179,6 +167,7 @@
         element.classList.add('active');
     }
 }
+
 
    
 
