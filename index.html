@@ -144,15 +144,23 @@
 
     <script>
   
-  function loadPage(element, url) {
+   function loadPage(element, url) {
     let finalUrl = url;
 
     if (url.toLowerCase().endsWith('.pdf')) {
         const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
         
         if (isMobile) {
-            // Reverting to the strict, clean relative path structure used in your working site
-            finalUrl = 'pdfjs/web/viewer.html?file=' + encodeURIComponent('../../' + url) + '#zoom=55&pagemode=none';
+            // 1. Get your absolute current site address
+            let basePath = window.location.origin + window.location.pathname;
+            if (!basePath.endsWith('/')) { basePath += '/'; }
+            basePath = basePath.replace('index.html/', '');
+
+            // 2. Build the exact web path to your PDF file
+            const fullPdfUrl = basePath + url;
+
+            // 3. Use an authorized, secure global CDN viewer link to bypass Android's local restrictions
+            finalUrl = 'https://cloudflare.com' + encodeURIComponent(fullPdfUrl) + '#zoom=55&pagemode=none';
         } else {
             // Using 60% zoom for desktop native viewer
             finalUrl = url + '#toolbar=0&navpanes=0#zoom=60';
@@ -167,9 +175,6 @@
         element.classList.add('active');
     }
 }
-
-
-   
 
 
         // Initialize page
