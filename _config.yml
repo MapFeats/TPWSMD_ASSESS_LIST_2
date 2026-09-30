@@ -1,0 +1,3 @@
+include: [pdfjs]
+mime_types:
+  text/javascript: [mjs]
