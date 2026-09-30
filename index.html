@@ -151,14 +151,8 @@
         const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
         
         if (isMobile) {
-            // Using a highly-indexed, pre-packaged global viewer template to eliminate local server module errors
-            const cdnViewer = 'https://mozilla.github.io/pdf.js/web/viewer.html';
-            
-            // Build the absolute pathway to your raw PDF file hosted on your repository
-            const rawPdfPath = window.location.origin + window.location.pathname.replace('index.html', '') + url;
-
-            // Combine them seamlessly into a single web string
-            finalUrl = cdnViewer + '?file=' + encodeURIComponent(rawPdfPath) + '#zoom=55&pagemode=none';
+            // Revert back to the exact clean setup from your working repository
+            finalUrl = 'pdfjs/web/viewer.html?file=../../' + url + '#zoom=55&pagemode=none';
         } else {
             // Using 60% zoom for desktop native viewer
             finalUrl = url + '#toolbar=0&navpanes=0#zoom=60';
@@ -173,9 +167,6 @@
         element.classList.add('active');
     }
 }
-
-
-
 
         // Initialize page
         window.onload = function() {
