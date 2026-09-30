@@ -150,8 +150,9 @@
         const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
         
         if (isMobile) {
-            // Using 55% zoom for mobile
-            finalUrl = 'pdfjs/web/viewer.html?file=../../' + url + '#zoom=55&pagemode=none';
+            // Added a unique timestamp (?v=) to break through stubborn Android caches
+            const cacheBuster = '?v=' + new Date().getTime();
+            finalUrl = 'pdfjs/web/viewer.html?file=' + encodeURIComponent('../../' + url) + cacheBuster + '#zoom=55&pagemode=none';
         } else {
             // Using 60% zoom for desktop native viewer
             finalUrl = url + '#toolbar=0&navpanes=0#zoom=60';
