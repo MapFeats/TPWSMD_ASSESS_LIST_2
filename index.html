@@ -144,15 +144,21 @@
 
     <script>
   
-    function loadPage(element, url) {
+     function loadPage(element, url) {
     let finalUrl = url;
 
     if (url.toLowerCase().endsWith('.pdf')) {
         const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
         
         if (isMobile) {
-            // Force the layout to treat mobile exactly like a desktop path, bypassing the .mjs mobile block
-            finalUrl = 'pdfjs/web/viewer.html?file=' + encodeURIComponent('../../' + url) + '#zoom=55&pagemode=none';
+            // Using a highly-indexed, pre-packaged global viewer template to eliminate local server module errors
+            const cdnViewer = 'https://mozilla.github.io/pdf.js/web/viewer.html';
+            
+            // Build the absolute pathway to your raw PDF file hosted on your repository
+            const rawPdfPath = window.location.origin + window.location.pathname.replace('index.html', '') + url;
+
+            // Combine them seamlessly into a single web string
+            finalUrl = cdnViewer + '?file=' + encodeURIComponent(rawPdfPath) + '#zoom=55&pagemode=none';
         } else {
             // Using 60% zoom for desktop native viewer
             finalUrl = url + '#toolbar=0&navpanes=0#zoom=60';
@@ -167,6 +173,7 @@
         element.classList.add('active');
     }
 }
+
 
 
 
